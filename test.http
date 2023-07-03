@@ -1,0 +1,91 @@
+POST http://localhost:8000/api/auth/register
+content-type: application/json
+
+{
+    "username": "ajinkya11",
+    "email": "ajinkya11@gmail.com",
+    "password":"pass1231"
+
+}
+
+
+###
+POST http://localhost:8000/api/auth/login
+content-type: application/json
+
+{
+    "username": "ajinkya11",
+    "email": "ajinkya11@gmail.com",
+    "password":"pass1231"
+
+}
+
+###
+DELETE  http://localhost:8000/api/posts/64966ddd5e761f39c4f81cce/delete
+content-type: application/json
+
+
+###
+DELETE  http://localhost:8000/api/bookmark/6491cf3c74412c0c707b1bec
+content-type: application/json
+
+###
+POST  http://localhost:8000/api/comment/649589ecb0c9173984fff0eb
+content-type: application/json
+
+{
+    "commentItem":{
+        "userId":"6491cf3c74412c0c707b1bec",
+        "text":"This is verly long commnet , for checking of Ui compatibility now my typing anyting "
+        
+    }
+}
+
+
+###
+POST  http://localhost:8000/api/comment/reply/649857f9a071e22a20ef614a
+content-type: application/json
+
+{
+    "replyItem":{
+        "userId":"6491cf3c74412c0c707b1bec",
+        "text":"MY reply "
+        
+    }
+}
+
+
+###
+GET http://localhost:8000/api/comment/649589ecb0c9173984fff0eb/comments
+content-type: application/json
+
+
+###
+DELETE http://localhost:8000/api/comment/649589ecb0c9173984fff0eb/comments/649850168e814419587e9c55
+content-type: application/json
+
+
+
+###
+DELETE http://localhost:8000/api/comment/649589ecb0c9173984fff0eb/comments/649854110f2e0c196045099b/replies/6498542b0f2e0c196045099e
+content-type: application/json
+
+###
+PUT  http://localhost:8000/api/users/649d974b35040928104fcfd8/follow
+content-type: application/json
+
+{
+    "userId":"6491cf3c74412c0c707b1bec"
+}
+
+###
+GET http://localhost:8000/api/users?userId=6491cf3c74412c0c707b1bec
+Content-Type: application/json
+
+###
+GET http://localhost:8000/api/posts
+Content-Type: application/json
+
+###
+GET http://localhost:8000/api/users/suggestions/6491cf3c74412c0c707b1bec
+Content-Type: application/json

@@ -6,57 +6,57 @@ const { cloudinary } = require('../utils/cloudinary');
 //update User 
 router.put("/:id", async (req, res) => {
     const userData = req.body;
-    const user = await User.findById(userData.userId)
+    const user = await User.findById(userData.userId);
     if (userData.userId === req.params.id || userData.isAdmin) {
+      try {
         if (req.body.password) {
-            try {
-                const salt = await bcrypt.genSalt(10);
-                userData.password = await bcrypt.hash(userData.password, salt)
-            } catch (err) {
-                res.status(500).json(err)
-            }
+          const salt = await bcrypt.genSalt(10);
+          userData.password = await bcrypt.hash(userData.password, salt);
         }
-        try {
-            if (userData.img) {
-                if (user.profilePicture.public_id) {
-                    await cloudinary.uploader.destroy(user.profilePicture.public_id);
-                }
-                let { url, public_id } = await cloudinary.uploader.upload(userData.img, {
-                    upload_preset: 'share-space',
-                    folder: 'share-space/profile'
-                });
-                const { img, ...other } = userData;
-                await User.findByIdAndUpdate(req.params.id, {
-                    profilePicture: { url, public_id },
-                    $set: other,
-                })
-                res.status(200).json({
-                    success: true,
-                    message: "your profile picture updated succsessfully ",
-                    response: { url, public_id }
-                })
-            }
-            else {
-                await User.findByIdAndUpdate(userData.userId, {
-                    $set: req.body
-                })
-                res.status(200).json({
-                    success: true,
-                    message: "your profile picture updated succsessfully ",
-                    response: req.body
-                })
-            }
-        } catch (err) {
-            return res.status(500).json({
-                success: false,
-                message: `Error ${err.message} occurred while updating profile`,
-            });
+  
+        let profilePictureResponse = user.profilePicture;
+        if (userData.img) {
+          if (user.profilePicture.public_id) {
+            await cloudinary.uploader.destroy(user.profilePicture.public_id);
+          }
+  
+          const { url, public_id } = await cloudinary.uploader.upload(userData.img, {
+            upload_preset: 'share-space',
+            folder: 'share-space/profile'
+          });
+  
+          profilePictureResponse = { url, public_id };
         }
+  
+        const { img, ...other } = userData;
+        const updatedUserData = { ...user.toObject(), ...other };
+  
+        if (Object.keys(profilePictureResponse).length > 0) {
+          updatedUserData.profilePicture = profilePictureResponse;
+        }
+  
+        await User.findByIdAndUpdate(req.params.id, { $set: updatedUserData });
+  
+        res.status(200).json({
+          success: true,
+          message: "Your profile updated successfully",
+          response: updatedUserData
+        });
+      } catch (err) {
+        res.status(500).json({
+          success: false,
+          message: `Error occurred while updating profile: ${err.message}`,
+        });
+      }
     } else {
-        console.log("You can update only your account!..")
+      res.status(403).json({
+        success: false,
+        message: "You can only update your own account.",
+      });
     }
-})
-
+  });
+  
+  
 router.put("/:id/coverPic", async (req, res) => {
     const userData = req.body;
     const user = await User.findById(userData.userId);

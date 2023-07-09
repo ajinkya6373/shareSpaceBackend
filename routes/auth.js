@@ -5,6 +5,18 @@ const bcrypt = require("bcrypt");
 
 router.post("/register", async (req, res) => {
   try {
+    const existingUser = await User.findOne({
+      $or: [{ username: req.body.username }, { email: req.body.email }],
+    });
+
+    if (existingUser) {
+      // User with the same username or email already exists
+      return res.status(400).json({
+        success: false,
+        message: "Username or email already exists.",
+      });
+    }
+
     // Generate new password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
@@ -22,23 +34,24 @@ router.post("/register", async (req, res) => {
     // Return a success response with limited user data
     res.status(200).json({
       success: true,
-      message: "Successfully Created account",
+      message: "Successfully created an account.",
       user: {
         _id: user._id,
         username: user.username,
         email: user.email,
-        profilePicture:user.profilePicture.url
+        profilePicture: user.profilePicture.url,
       },
     });
   } catch (err) {
     // Handle error and return an error response
     res.status(500).json({
       success: false,
-      message: "Failed to register user",
+      message: "Failed to register user.",
       error: err.message,
     });
   }
 });
+
 
 //LOGIN
 

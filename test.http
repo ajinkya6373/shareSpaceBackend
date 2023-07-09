@@ -83,7 +83,7 @@ GET http://localhost:8000/api/users?userId=6491cf3c74412c0c707b1bec
 Content-Type: application/json
 
 ###
-GET http://localhost:8000/api/posts
+GET https://sharespacebackend.ajinkya6373.repl.co/api/posts
 Content-Type: application/json
 
 ###
